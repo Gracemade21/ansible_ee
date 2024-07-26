@@ -1,0 +1,39 @@
+---
+version: 3
+
+images:
+  base_image:
+    name: registry.redhat.io/ansible-automation-platform/ee-minimal-rhel9:2.15.11-2
+
+options:
+  package_manager_path: /usr/bin/microdnf
+  user: root
+
+dependencies:
+  galaxy: requirements.yml
+  python: requirements.txt
+  system: bindep.txt
+
+additional_build_files:
+  - src: git-credential-environment
+    dest: bin
+  - src: gitconfig
+    dest: config
+  - src: hylandgov-chain.pem
+    dest: certs
+
+additional_build_steps:
+  prepend_base:
+    - COPY _build/certs/hylandgov-chain.pem /etc/ansible/
+    - COPY _build/certs/hylandgov-chain.pem /etc/pki/ca-trust/source/anchors/
+    - RUN update-ca-trust
+    - RUN curl -o /etc/yum.repos.d/hashicorp.repo https://rpm.releases.hashicorp.com/RHEL/hashicorp.repo
+  prepend_galaxy:
+    - ENV ANSIBLE_GALAXY_SERVER_LIST="automation_hub, galaxy"
+    - ENV ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_URL=https://console.redhat.com/api/automation-hub/content/published/
+    - ENV ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_AUTH_URL=https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+    - ARG ANSIBLE_GALAXY_SERVER_AUTOMATION_HUB_TOKEN
+    - ENV ANSIBLE_GALAXY_SERVER_GALAXY_URL=https://galaxy.ansible.com
+  append_final:
+    - COPY --chmod=0755 _build/bin/git-credential-environment /usr/local/bin/
+    - COPY _build/config/gitconfig /etc/

@@ -1,0 +1,4 @@
+python3-ldap [platform:rpm]
+python3-psutil [platform:rpm]
+python3-pyodbc [platform:rpm]
+terraform [platform:rpm]

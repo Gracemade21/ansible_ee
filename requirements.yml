@@ -1,0 +1,6 @@
+---
+collections:
+  - name: amazon.aws
+  - name: ansible.controller
+  - name: community.general
+  - name: netapp.ontap
