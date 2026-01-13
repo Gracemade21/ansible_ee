@@ -1,6 +1,11 @@
 ---
 collections:
   - name: amazon.aws
+  - name: community.aws
   - name: ansible.controller
+  - name: awx.awx
   - name: community.general
   - name: netapp.ontap
+  - name: kubernetes.core
+  - name: cloud.common
+  - name: ansible.posix
